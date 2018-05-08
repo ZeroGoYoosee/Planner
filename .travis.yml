@@ -1,0 +1,36 @@
+language: android
+
+git:
+  depth: 9999999
+
+jdk: oraclejdk8
+android:
+  components:
+  - tools
+  - tools
+  - build-tools-27.0.3
+  - android-27
+
+before_install:
+- chmod +x gradlew
+- openssl aes-256-cbc -K $encrypted_d41a0e04e608_key -iv $encrypted_d41a0e04e608_iv -in zero-own-keystore.jks.enc -out zero-own-keystore.jks -d
+- gem install fir-cli
+- yes | sdkmanager "platforms;android-27"
+
+script:
+- "./gradlew assembleRelease"
+
+deploy:
+  provider: releases
+  file: app/build/outputs/apk/release/app-release.apk
+  api_key:
+    secure: 0d0HaSlz87S4rA+ya7CRnG7gyrcX3Mn5vhBXgKo87RaDQzMpRumFe14wchyP0eYZ9+BpL3nW3FbePaWAQhCKt09kQJ1jpoVqJg+T03BXLf5L+nGaKf5uW62CslkxrSfACxqZRfABLAoNzXdiwIcAYImJO4XV/Eol09y+C+O1B4E/tfPNknrwMchuIeVnBBNXQRDjRAgLnEli8hcfdmttR6W8m51nRIVHkPfwVhx0cTMGPL5MwdnFwIUdx7DLq+g/8IE/KgiTHqUzsbq3g4Gnc1PDjw5mE9mbg41LZGSYK1/T+wa4N7WYIysX3ofSg9ELdIUbL/1GTymaCEmkSUP4oYJaWLDTd+Dl0K4WWxc1oXkV7Cr5sF7aPfo0U6efKhwOejjkg95/i+NzFHfK5ElcaT+Y9FnvMbkwpW7fXi+t5jJqyKuCVOtAPsrtSt3wp5i/1mSFXEpiuaIc3tbLo+wY+lfBlvqPBBDFzMNOSx/rX98FQEeF3zToLhUl5oS7lUoa5kpdWTvNzmpiCX8FLAKjPZPgBtMb878E/qZKI1QTbVPYAVL5xF4nIjcgYyNIENAe9q0rQclAGCchT0IQdsj/JIZE3EhuQldsfR6UZ1b/JwzypolqB6PB2QaDstfjZB0V/oN/YyMVj5/X7fbTmSrwfLScyB1se6zPQbpA56m1uks=
+  overwrite: true
+  skip_cleanup: true
+  on:
+    repo: ZeroGoYoosee/Planner
+    tags: true
+
+after_script:
+- fir login $fir_token
+- fir p app/build/outputs/apk/release/app-release.apk
